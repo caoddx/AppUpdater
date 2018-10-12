@@ -14,7 +14,14 @@ class MainActivity : AppCompatActivity() {
         // see https://fir.im/docs
         val source = FirImSource("your app id", "your api token")
 
-        val updater = Updater(this, UpdateUI(this), source, checkIntervalInSecond = 0, downloadMode = DownloadMode.AllAllowAndAsk)
+        val updater = Updater(
+                this,
+                UpdateUI(this),
+                source,
+                checkIntervalInSecond = 12 * 3600,
+                downloadMode = DownloadMode.AllAllowAndAsk
+        )
+
         updater.start()
 
         button.setOnClickListener {
