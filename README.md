@@ -1,5 +1,7 @@
 # AppUpdater
 
+[![jitpack](https://jitpack.io/v/caoddx/AppUpdater.svg)](https://jitpack.io/#caoddx/AppUpdater)
+
 android app updater
 
 ## Gradle Dependency
