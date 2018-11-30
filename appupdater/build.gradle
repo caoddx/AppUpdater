@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -38,7 +38,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
 
     // caoddx
-    implementation 'com.github.caoddx:RxLifecycle:0.1.0'
+    implementation 'com.github.caoddx:RxLifecycle:0.2.0'
 }
 
 apply plugin: 'com.github.dcendents.android-maven'
