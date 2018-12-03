@@ -24,10 +24,10 @@ allprojects {
 ```gradle
 dependencies {
     // core
-    implementation 'com.github.caoddx.AppUpdater:appupdater:0.0.1'
+    implementation 'com.github.caoddx.AppUpdater:appupdater:0.2.0'
 
     // update source : fir.im
-    implementation 'com.github.caoddx.AppUpdater:firimupdatesource:0.0.1'
+    implementation 'com.github.caoddx.AppUpdater:firimupdatesource:0.2.0'
 }
 ```
 
