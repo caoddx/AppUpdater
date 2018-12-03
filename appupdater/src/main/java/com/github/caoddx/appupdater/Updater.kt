@@ -19,11 +19,17 @@ class Updater(private val activity: AppCompatActivity,
               private val downloadMode: DownloadMode = AllAllowAndWifiNoAsk) {
 
     private val config = UpdateConfig(activity)
-    private val versionCode: Int get() = config.appVersionCode
+    private var versionCode: Int = config.appVersionCode
     private val installer = ApkInstaller(activity)
 
     fun undoVersionIgnore() {
         config.ignoreVersionCode = -1
+    }
+
+    fun startTest() {
+        versionCode = 0
+        start()
+        versionCode = config.appVersionCode
     }
 
     fun start() {
