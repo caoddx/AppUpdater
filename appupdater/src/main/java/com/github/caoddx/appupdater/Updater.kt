@@ -21,17 +21,21 @@ class Updater(private val activity: AppCompatActivity,
               private val downloadMode: DownloadMode = AllAllowAndWifiNoAsk) {
 
     private val config = UpdateConfig(activity)
-    private var versionCode: Int = config.appVersionCode
+    private val versionCode: Int
+        get() {
+            return if (isTest) 0 else config.appVersionCode
+        }
     private val installer = ApkInstaller(activity)
 
     fun undoVersionIgnore() {
         config.ignoreVersionCode = -1
     }
 
+    private var isTest: Boolean = false
+
     fun startTest() {
-        versionCode = 0
+        isTest = true
         start()
-        versionCode = config.appVersionCode
     }
 
     fun start() {
@@ -44,7 +48,6 @@ class Updater(private val activity: AppCompatActivity,
                     checkRemoteSource()
                 }
                 .filter { it.versionCode != config.ignoreVersionCode }
-                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { info ->
                     checkCacheApk(info)
                             .flatMapMaybe {
@@ -64,6 +67,9 @@ class Updater(private val activity: AppCompatActivity,
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMapSingleElement { (info, apkFilePath) ->
                     install(info, apkFilePath)
+                }
+                .doOnSuccess {
+                    isTest = false
                 }
                 .subscribe()
                 .bindTo(activity)
