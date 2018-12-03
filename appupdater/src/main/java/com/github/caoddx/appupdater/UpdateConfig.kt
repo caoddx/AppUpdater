@@ -24,6 +24,7 @@ class UpdateConfig(private val context: Context) {
 
     var apkFileName: String by sp.string()
     var apkFilePath: String by sp.string()
+    var apkFileVersionCode: Int by sp.int(-1)
 
     /*var latestInfo: UpdateSource.LatestInfo
         get() {

@@ -1,6 +1,8 @@
 package com.github.caoddx.appupdater
 
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import com.github.caoddx.appupdater.DownloadMode.*
@@ -41,13 +43,20 @@ class Updater(private val activity: AppCompatActivity,
                 .flatMap {
                     checkRemoteSource()
                 }
+                .filter { it.versionCode != config.ignoreVersionCode }
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { info ->
-                    // todo start local apk file
-                    checkCanDownload(info)
-                }
-                .flatMap { info ->
-                    download(info)
+                    checkCacheApk(info)
+                            .flatMapMaybe {
+                                if (it) {
+                                    Maybe.just(config.apkFilePath)
+                                } else {
+                                    checkCanDownload(info)
+                                            .flatMap { info ->
+                                                download(info)
+                                            }
+                                }
+                            }
                             .map {
                                 info to it
                             }
@@ -62,6 +71,18 @@ class Updater(private val activity: AppCompatActivity,
 
     private fun checkable(): Single<Boolean> {
         return Single.just(isConnected() && Date().time / 1000 - config.lastCheckTime > checkIntervalInSecond)
+    }
+
+    private fun checkCacheApk(info: UpdateSource.LatestInfo): Single<Boolean> {
+        if (info.versionCode == config.apkFileVersionCode) {
+            val pi: PackageInfo? = activity.packageManager.getPackageArchiveInfo(config.apkFilePath, PackageManager.GET_META_DATA)
+            if (pi != null) {
+                if (pi.versionCode == info.versionCode && activity.packageName.equals(pi.packageName, true)) {
+                    return Single.just(true)
+                }
+            }
+        }
+        return Single.just(false)
     }
 
     private fun checkCanDownload(info: UpdateSource.LatestInfo): Maybe<UpdateSource.LatestInfo> {
@@ -124,6 +145,7 @@ class Updater(private val activity: AppCompatActivity,
                 .doOnSuccess { path ->
                     config.apkFilePath = path
                     config.apkFileName = filename
+                    config.apkFileVersionCode = info.versionCode
                 }
     }
 
